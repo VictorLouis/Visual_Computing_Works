@@ -1,7 +1,10 @@
-int illusions = 7;
+int illusions = 6;
 int current = 1;
 //toggle illusion activation
 boolean active = true;
+float x;
+int k=360;
+int c;
 
 void setup() {
   size(800, 800);
@@ -12,7 +15,7 @@ void draw() {
   pushStyle();
   switch(current) {
   case 1:
-    scintillating();
+    colors();
     break;
     // implement from here. Don't forget to add break for each case
   case 2:
@@ -30,8 +33,6 @@ void draw() {
   case 6:
     squares();
     break;
-  case 7:
-    //println("implementation is missed!");
   }
   popStyle();
 }
@@ -47,42 +48,48 @@ void keyPressed() {
 // Complete info for each illusion
  
 /*
- Scintillating Grid
- Author: E. Lingelbach, 1994
- Code adapted from Rupert Russell implementation
+ illusion abstract
+ Author: 
+ Code adapted from Rami Madani implementation
  Tags: Physiological illusion, Hermann grid illusion
 */
-void scintillating() {
-  background(0);          // black background
-
-  //style
-  strokeWeight(3);        // medium weight lines 
-  smooth();               // antialias lines
-  stroke(100, 100, 100);  // dark grey colour for lines
-
-  int step = 25;          // grid spacing
-
-  //vertical lines
-  for (int x = step; x < width; x = x + step) {
-    line(x, 0, x, height);
+void colors(){
+  //black background
+  background(0);
+  colorMode(HSB);
+  //centered
+  translate(400,400);
+  //t => {1, 512}
+  for (int t=0, C=0; t<k; t++, C++){
+    //all collours
+    if (2*c + C > 256){
+    C-=256;
+    }
+    else if (2*c + C < 0){
+      C+=256;
+    }
+    fill(C + 2*c,255,255);
+    //the golden ratio angle (the magic)
+    rotate(radians(137.5));
+    //change of size with respect to distance to center
+      ellipse(t-k,0,2*sqrt(abs(t-k)),2*sqrt(abs(t-k)));
   }
-
-  //horizontal lines
-  for (int y = step; y < height; y = y + step) {
-    line(0, y, width, y);
-  }
-
-  // Circles
-  if (active) {
-    ellipseMode(CENTER);
-    stroke(255, 255, 255);  // white circles
-    for (int i = step; i < width -5; i = i + step) {
-      for (int j = step; j < height -15; j = j + step) {
-        strokeWeight(6); 
-        point(i, j);
-        strokeWeight(3);
+  //black circles
+  if(active){
+    noFill();
+    strokeWeight(7);
+    stroke(0);
+    for(int n = 0; n < 60; n++){
+      
+      if(-c + 18*n > 0){
+        ellipse(0, 0, -c + 18*n, -c + 18*n);
+      }
+      if(c > 256){
+        c-=256;
       }
     }
+    noStroke();
+    c+=2;
   }
 }
 
@@ -126,12 +133,12 @@ void graydot(){
   }
 
 }
+
 /*
  Hering Illusion
  Author: E. Lingelbach, 1994
  Code adapted from Greg Wittman implementation
 */
-
 void hering(){
   if(active){
     background(255);
@@ -163,6 +170,7 @@ void hering(){
     line(300, 0, 300, 500);
   }
 }
+
 /*
  Stepping Feet
  Author: E. Lingelbach, 1994
@@ -170,8 +178,43 @@ void hering(){
  Tags: Physiological illusion, Hermann grid illusion
 */
 void steps(){
+  background(255);
+
+  for (int i = 0; i < 30;i++) {
+    noStroke();
+    fill(0);
+    rect(i * 20, 0, 10, height);
+  }
+
+  if (mousePressed == true) {
+    background(150);
+  }
+
+  for (int q = 0; q < 4; q++) {
+    if (q % 2 == 0) {
+      fill(0);
+    }
+    else {
+      fill(255);
+    }
+    rect(x, q * 90 + 5, 20, 50);
+  }
+
+  if (!active) {
+    stroke(255, 0, 0);
+    strokeWeight(3);
+    noFill();
+    rect(x, 5, 21, 320);
+  }
+  
+  x += 0.5;
+ 
+  if (x > width + 10) {
+    x = 0;
+  }
   
 }
+
 /*
  Hipnotize
  Code adapted from Jesse Smith implementation
@@ -202,6 +245,13 @@ void hipnotize(){
   }
 }
 
+
+/*
+ Moving Polygons
+ Author: Bridget Louise Rile, 1961
+ Code adapted from RHeartbreak implementation
+ Tags: Physiological illusion, Art
+*/
 void polygon(int sides, float x, float y, float rad)
 {
   beginShape();
@@ -221,7 +271,6 @@ void polygon(int sides, float x, float y, float rad)
  Code adapted from RHeartbreak implementation
  Tags: Physiological illusion, Art
 */
-
 void squares(){
  background(0);
   smooth();
